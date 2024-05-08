@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class PostService {
   String baseUrl =
-      "https://crudcrud.com/api/28ddbe69f83246319d40bb64c2833df1/unicorns/";
+      "https://crudcrud.com/api/bb088476c0364ff6b9ab1a224f0273c9/unicorns/";
 
   Future<List> getPosts() async {
     try {
@@ -44,4 +44,27 @@ class PostService {
       return "err";
     }
   }
+
+   Future<String> deletePost(Map<String, dynamic> data) async {
+     try {
+       var response = await http.delete(
+         Uri.parse("$baseUrl/delete"),
+         body: jsonEncode(data),
+         headers: {
+           "Content-Type": "application/json; charset=UTF-8",
+         },
+       );
+       //
+       if (response.statusCode == 200) {
+         return "success";
+       } else {
+         print(response.body);
+         // server error
+         return "err";
+       }
+     } catch (SocketException) {
+       // fetching error
+       return "err";
+     }
+   }
 }

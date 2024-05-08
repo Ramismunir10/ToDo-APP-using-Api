@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:todoapi/post_services.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -39,7 +38,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           String? title;
-          String? slug;
+          String? _id;
           String? content;
           showDialog(
             context: context,
@@ -76,10 +75,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          slug = title?.split(" ").join("-");
+                          _id = title?.split(" ").join("-");
                           Map<String, dynamic> data = {
                             "title": title,
-                            "slug": slug,
+                            "_id": _id,
                             "content": content
                           };
                           //make response
@@ -118,6 +117,21 @@ class _HomePageState extends State<HomePage> {
                   return ListTile(
                     title: Text(snapshot.data?[index]["title"]),
                     subtitle: Text(snapshot.data?[index]["content"]),
+                    trailing: IconButton(
+                        onPressed: () async {
+                          Map<String, dynamic> data = {
+                            "_id": snapshot.data?[index]['_id']
+                          };
+                          var res = await postService.deletePost(data);
+                          res == "success"
+                              ? Fluttertoast.showToast(
+                                  msg: "Post Deleted Successfully !")
+                              : Fluttertoast.showToast(
+                                  msg: "Error Deleting Post !");
+                          Navigator.of(context).pop();
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.delete)),
                   );
                 },
               );
